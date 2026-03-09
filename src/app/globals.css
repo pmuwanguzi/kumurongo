@@ -1,0 +1,53 @@
+/* Kumurongo Global Styles */
+
+body {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Navbar brand color */
+.navbar-brand {
+  font-weight: 700;
+  color: #0d6efd !important;
+}
+
+/* Card hover effect */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Custom badge for user types */
+.badge-client { background-color: #0d6efd; }
+.badge-provider { background-color: #198754; }
+.badge-potential { background-color: #ffc107; color: #000; }
+.badge-admin { background-color: #dc3545; }
+.badge-super-admin { background-color: #6f42c1; }
+
+/* Star rating */
+.star-rating {
+  color: #ffc107;
+  font-size: 1.2rem;
+}
+
+/* Chat bubbles */
+.chat-bubble-sent {
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  padding: 8px 14px;
+  max-width: 70%;
+  margin-left: auto;
+}
+
+.chat-bubble-received {
+  background-color: #e9ecef;
+  color: #212529;
+  border-radius: 18px 18px 18px 4px;
+  padding: 8px 14px;
+  max-width: 70%;
+}
