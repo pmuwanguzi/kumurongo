@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import ReviewForm from "@/components/ReviewForm";
 
 export default async function ClientDashboard() {
   const session = await auth();
@@ -15,6 +16,9 @@ export default async function ClientDashboard() {
     include: {
       service: { select: { title: true, category: true } },
       provider: { select: { name: true } },
+      reviews: {
+        where: { reviewerId: session.user.id },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 5,
@@ -100,53 +104,64 @@ export default async function ClientDashboard() {
             <div className="card-body p-4">
               <h5 className="fw-bold mb-3">My Engagements</h5>
               {engagements.length === 0 ? (
-                <div className="text-center py-4 text-muted">
-                  <div style={{ fontSize: "3rem" }}>📭</div>
-                  <p className="mt-2">No engagements yet</p>
-                  <Link href="/services" className="btn btn-primary btn-sm">
-                    Find Your First Service
-                  </Link>
-                </div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="table table-hover align-middle">
-                    <thead className="table-light">
-                      <tr>
-                        <th>Service</th>
-                        <th>Provider</th>
-                        <th>Category</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {engagements.map((eng) => (
-                        <tr key={eng.id}>
-                          <td className="fw-semibold">
-                            {eng.service.title}
-                          </td>
-                          <td>{eng.provider.name}</td>
-                          <td>
-                            <span className="badge bg-light text-dark border">
-                              {eng.service.category}
-                            </span>
-                          </td>
-                          <td>
-                            <span
-                              className={`badge bg-${statusColor[eng.status]}`}
-                            >
-                              {eng.status}
-                            </span>
-                          </td>
-                          <td className="text-muted small">
-                            {new Date(eng.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+  <div className="text-center py-4 text-muted">
+    <div style={{ fontSize: "3rem" }}>📭</div>
+    <p className="mt-2">No engagements yet</p>
+    <Link href="/services" className="btn btn-primary btn-sm">
+      Find Your First Service
+    </Link>
+  </div>
+) : (
+  <div>
+    {engagements.map((eng) => (
+      <div key={eng.id} className="border rounded p-3 mb-3">
+        <div className="d-flex justify-content-between align-items-start">
+          <div>
+            <div className="fw-semibold">{eng.service.title}</div>
+            <small className="text-muted">
+              Provider: {eng.provider.name}
+            </small>
+            <div className="mt-1">
+              <span className="badge bg-light text-dark border me-2">
+                {eng.service.category}
+              </span>
+              <span
+                className={`badge bg-${statusColor[eng.status]}`}
+              >
+                {eng.status}
+              </span>
+            </div>
+          </div>
+          <small className="text-muted">
+            {new Date(eng.createdAt).toLocaleDateString()}
+          </small>
+        </div>
+
+        {/* Show review form for completed engagements */}
+        {eng.status === "COMPLETED" && eng.reviews.length === 0 && (
+          <div className="mt-3">
+            <ReviewForm
+              engagementId={eng.id}
+              revieweeName={eng.provider.name ?? "Provider"}
+            />
+          </div>
+        )}
+
+        {/* Show existing review */}
+        {eng.reviews.length > 0 && (
+          <div className="mt-3 p-3 bg-light rounded">
+            <small className="text-muted fw-semibold">Your Review:</small>
+            <div className="text-warning">
+              {"★".repeat(eng.reviews[0].rating)}
+              {"☆".repeat(5 - eng.reviews[0].rating)}
+            </div>
+            <p className="small mb-0">{eng.reviews[0].content}</p>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+)}
             </div>
           </div>
 
