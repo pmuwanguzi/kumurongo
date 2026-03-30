@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import FlagUserButton from "@/components/FlagUserButton";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -218,6 +219,17 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                   Login to Contact
                 </Link>
               )}
+              {/* Flag Button */}
+
+              {session &&
+                session.user.id !== service.provider.id && (
+                  <div className="mt-2">
+                    <FlagUserButton
+                      flaggedUserId={service.provider.id}
+                      flaggedUserName={service.provider.name ?? "Provider"}
+                    />
+                  </div>
+                )}
 
             </div>
           </div>
