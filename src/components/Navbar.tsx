@@ -47,9 +47,14 @@ export default function Navbar() {
               <>
                 <li className="nav-item">
                   <Link
-                    href={`/dashboard/${session.user.userType
-                      .toLowerCase()
-                      .replace("_", "-")}`}
+                    href={(() => {
+                        const type = session.user.userType;
+                        if (type === "SERVICE_PROVIDER") return "/dashboard/provider";
+                        if (type === "POTENTIAL_PROVIDER") return "/dashboard/potential";
+                        if (type === "SUPER_ADMIN") return "/dashboard/super-admin";
+                        if (type === "ADMIN") return "/dashboard/admin";
+                        return "/dashboard/client";
+                      })()}
                     className="nav-link"
                   >
                     Dashboard
